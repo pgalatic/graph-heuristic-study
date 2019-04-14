@@ -1,6 +1,8 @@
 # author: Paul Galatic
 #
 # Graph heuristic study -- compute chi numbers
+#
+# inspired by https://ieeexplore.ieee.org/abstract/document/5952075
 
 # standard lib
 import sys
