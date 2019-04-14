@@ -8,7 +8,6 @@ import time
 import random
 import argparse
 import linecache
-import subprocess
 from pathlib import Path
 
 # REQUIRED LIB
@@ -16,6 +15,10 @@ import grinpy as gp
 import networkx as nx
 
 # PROJECT LIB
+import de
+# import pso
+# import aco
+from greedy_color import greedy_color
 
 # CONSTANTS
 TIME_FORMAT = '%H:%M:%S'
@@ -30,7 +33,7 @@ def parse_args():
     '''Parses arguments'''
     ap = argparse.ArgumentParser()
     
-    ap.add_argument('-n', required=True,
+    ap.add_argument('n',
         help='the number of graphs to analyze')
     ap.add_argument('--shell', action='store_true',
         help='set to True if running on a Windows environment')
@@ -43,9 +46,9 @@ def gen_graphs(shell):
     if shell:
         raise Exception('Operation not supported on Windows.')
     
-    path_in = str(GRAPH_DIR) + '/geng'
+    path_in = str(GRAPH_DIR / 'geng')
     path_out = str(GRAPH_DIR / GRAPHS_NAME)
-    subprocess.call([f'./{path_in}', '10', '>', f'{path_out}'])
+    os.system(f'./{path_in} 10 > {path_out}')
     
     with open(path_out, 'r+', newline='\n', encoding='ISO-8859-1') as f:
         content = f.read()
@@ -88,13 +91,17 @@ def main():
     graphs_with_chi = load_graphs(args.n)
     graphs = graphs_with_chi.keys()
     
-    # log(graphs_with_chi)
+    log(graphs_with_chi.values())
     
     # color each graph with each algorithm
     # each algorithm will predict the chi of the graph and this will form new
     # mappings of graph -> chi
-    
-    # TODO
+    gr_graphs = {graph: greedy_color(graph) for graph in graphs}
+    log(gr_graphs.values())
+    de_graphs = de.compute_chi(graphs)
+    log(de_graphs.values())
+    # pso.compute_chi(graphs)
+    # aco.compute_chi(graphs)
     
     # analyze the difference between the predictions and the actual
     
