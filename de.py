@@ -22,6 +22,36 @@ def log(s):
     '''More informative print debugging'''
     print('[%s]: %s' % (time.strftime(TIME_FORMAT, time.localtime()), str(s)))
 
+class Particle(Solution):
+
+    def __init__(self, graph, omega, phi):
+        Solution.__init__(self, graph)
+        self.omega = omega
+        self.phi = phi
+
+    def update(self, peers):
+        x1 = peers[0].position
+        x2 = peers[1].position
+        x3 = peers[2].position
+        # multiply x_diff by the mutation factor (omega) and add to x1
+        donor = np.zeros(len(self.position))
+        for idx in range(len(self.position)):
+            donor[idx] = x1[idx] + (self.omega * (x2[idx] - x3[idx]))
+        idy = random.randrange(len(self.position))
+        # apply crossover
+        trial = np.zeros(len(self.position))
+        for idx in range(len(self.position)):
+            chance = random.random()
+            if chance <= self.phi or idx == idy:
+                trial[idx] = donor[idx]
+            else:
+                trial[idx] = self.position[idx]
+        trial_fitness = self.fit_func(trial)
+        if trial_fitness > self.fitness:
+            self.position = trial
+            self.check_position()
+            self.fitness = self.fit_func()
+
 class Optimizer:
 
     def __init__(self, **kwargs):
@@ -39,7 +69,7 @@ class Optimizer:
 
         self.population = []
         for i in range(self.pops):
-            self.population.append(Solution(self.graph, self.omega, self.phi))
+            self.population.append(Particle(self.graph, self.omega, self.phi))
 
     def step(self):
         for pop in self.population:
