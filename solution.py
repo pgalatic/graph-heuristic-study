@@ -20,9 +20,10 @@ from greedy_color import greedy_color
 class Solution:
 
     def __init__(self, graph):
-        self.graph = graph
-        self.position = np.random.rand(len(self.graph))
-        self.fitness = self.fit_func()
+        self.graph     = graph
+        self.dimension = len(self.graph)
+        self.position  = np.random.rand(self.dimension)
+        self.fitness   = self.fit_func()
 
     def get_order(self, position=None):
         '''
@@ -31,9 +32,9 @@ class Solution:
         taking the first index available (according to np.argmax()).
         '''
         if type(position) == type(None): position = self.position
-        order = np.zeros(len(position))
+        order = np.zeros(self.dimension)
         pos_copy = np.array(position) # don't want to alter self.position
-        for idx in range(len(pos_copy)):
+        for idx in range(self.dimension):
             maxi = np.argmax(pos_copy)
             order[idx] = maxi
             pos_copy[maxi] = -1 # set outside the domain
@@ -50,7 +51,7 @@ class Solution:
         greedy_color() == 2.
         '''
         order = self.get_order(position)
-        return 1 - ((greedy_color(self.graph, order) - 2) / (len(self.graph) - 2))
+        return 1 - ((greedy_color(self.graph, order) - 2) / (self.dimension - 2))
 
     def check_position(self):
         '''Ensure the values of position stay within the domain [0-1].'''

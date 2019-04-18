@@ -34,13 +34,13 @@ class Particle(Solution):
         x2 = peers[1].position
         x3 = peers[2].position
         # multiply x_diff by the mutation factor (omega) and add to x1
-        donor = np.zeros(len(self.position))
-        for idx in range(len(self.position)):
+        donor = np.zeros(self.dimension)
+        for idx in range(self.dimension):
             donor[idx] = x1[idx] + (self.omega * (x2[idx] - x3[idx]))
-        idy = random.randrange(len(self.position))
+        idy = random.randrange(self.dimension)
         # apply crossover
-        trial = np.zeros(len(self.position))
-        for idx in range(len(self.position)):
+        trial = np.zeros(self.dimension)
+        for idx in range(self.dimension):
             chance = random.random()
             if chance <= self.phi or idx == idy:
                 trial[idx] = donor[idx]
