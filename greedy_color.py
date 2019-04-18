@@ -62,5 +62,3 @@ def greedy_color(graph, order=None):
 
     return len(color_class)
 
-if __name__ == '__main__':
-    main()
