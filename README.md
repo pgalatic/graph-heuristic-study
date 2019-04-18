@@ -10,3 +10,5 @@ pip install -r requirements.txt
 
 Extract the folder 'grinpy' from 'grinpy' and put it at the level of the root
 directory. Delete the rest.
+
+Create a folder called 'graph' at the root level.
