@@ -25,6 +25,11 @@ class Solution:
         self.position  = np.random.rand(self.dimension)
         self.fitness   = self.fit_func()
 
+    def update_position(self, position):
+        self.position = position
+        self.check_position()
+        self.fitness = self.fit_func(position)
+
     def get_order(self, position=None):
         '''
         The ordering is found by "collapsing" the position, which is given as a

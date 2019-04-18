@@ -48,9 +48,7 @@ class Particle(Solution):
                 trial[idx] = self.position[idx]
         trial_fitness = self.fit_func(trial)
         if trial_fitness > self.fitness:
-            self.position = trial
-            self.check_position()
-            self.fitness = self.fit_func()
+            self.update_position(trial)
 
 class Optimizer:
 
