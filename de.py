@@ -6,8 +6,9 @@
 
 # standard lib
 import sys
-import math
 import copy
+import math
+import time
 import random
 import operator
 
@@ -16,6 +17,8 @@ import numpy as np
 
 # project lib
 from greedy_color import greedy_color
+
+TIME_FORMAT = '%H:%M:%S'
 
 def log(s):
     '''More informative print debugging'''
@@ -90,7 +93,7 @@ class DE_Opt:
 
     def __init__(self, **kwargs):
         self.pops           = kwargs.get('pops', 50)
-        self.generations    = kwargs.get('gens', 100)
+        self.generations    = kwargs.get('gens', 50)
         self.omega          = kwargs.get('omega', 0.5)
         self.phi            = kwargs.get('phi', 0.5)
         self.graph          = kwargs.get('graph', None)
@@ -115,6 +118,7 @@ class DE_Opt:
 
     def run(self):
         for t in range(self.generations):
+            # log(f'Generation {t}...')
             gbest = self.step()
         return gbest
 

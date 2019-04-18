@@ -4,6 +4,7 @@
 
 # STD LIB
 import os
+import copy
 import time
 import random
 import argparse
@@ -27,8 +28,9 @@ TIME_FORMAT = '%H:%M:%S'
 GRAPH_DIR = Path('graph/')
 
 SML = 10
-MED = 100
-LRG = 1000
+MED = 23
+LRG = 300
+NUM = 1000
 
 SML_NAME = f'n{SML}.g6'
 MED_NAME = f'n{MED}.g6'
@@ -46,26 +48,28 @@ def parse_args():
         help='[s|m|l] -- small, medium, or large')
     ap.add_argument('n', type=int,
         help='the number of graphs to analyze')
+    ap.add_argument('--gtskip', action='store_true',
+        help='set true to skip ground truth calculations')
     
     return ap.parse_args()
 
-def gen_rand_graphs(dim, n, theta=0.5):
+def gen_rand_graphs(dim, theta=0.85):
     '''Generates random graphs based on parameter theta'''
     graphs = []
     
-    log(f'generating {n} Erdős-Rényi graphs of size {dim}...')
-    for _ in range(n):
+    log(f'generating {NUM} Erdős-Rényi graphs of size {dim}...')
+    for _ in range(NUM):
         # create a blank adjacency matrix
         graph = np.zeros(shape=(dim, dim))
         
         # add edges according to a random process
-        for idx in range(dim - 2):
+        for idx in range(dim - 1):
             for idy in range(idx + 1, dim - 1):
                 rand = random.random()
-                if rand >= theta:
+                if rand <= theta:
                     # make sure the graphs are symmetrical
-                    graph[idx - 1][idy - 1] = 1
-                    graph[idy - 1][idx - 1] = 1
+                    graph[idx][idy] = 1
+                    graph[idy][idx] = 1
         graphs.append(graph)
     
     return [nx.from_numpy_array(graph) for graph in graphs]
@@ -106,8 +110,10 @@ def load_graphs(mode, num):
     if num >= length:
         num = length - 1
         log(f'WARNING: Can only load up to {length} graphs from this file.')
-    idxs = random.sample(range(length), int(num))
-    raw_graphs = [linecache.getline(fname, idx) for idx in idxs]
+    
+    with open(fname, 'r') as f:
+        lines = f.readlines()
+    raw_graphs = random.sample(lines, num)
     
     # create temporary file so that nx can read it
     temp_path = 'temp'
@@ -128,19 +134,23 @@ def main():
 
     # load graphs, or generate them if they don't exist
     if not os.path.exists(str(GRAPH_DIR / SML_NAME)):
-        record_graphs(gen_rand_graphs(SML, LRG), str(GRAPH_DIR / SML_NAME))
+        record_graphs(gen_rand_graphs(SML), str(GRAPH_DIR / SML_NAME))
     if not os.path.exists(str(GRAPH_DIR / MED_NAME)):
-        record_graphs(gen_rand_graphs(MED, MED), str(GRAPH_DIR / MED_NAME))
+        record_graphs(gen_rand_graphs(MED), str(GRAPH_DIR / MED_NAME))
     if not os.path.exists(str(GRAPH_DIR / LRG_NAME)):
-        record_graphs(gen_rand_graphs(LRG, SML), str(GRAPH_DIR / LRG_NAME))
+        record_graphs(gen_rand_graphs(LRG), str(GRAPH_DIR / LRG_NAME))
     
     graphs = load_graphs(args.mode, args.n)
     
     # ground truth graphs
-    log('Calculating ground truth...')
+    
     start = time.time()
-    gt_graphs = {graph : gp.chromatic_number(graph) for graph in graphs}
-    log(f'{round(time.time() - start, 3)} seconds')
+    if args.gtskip:
+        gt_graphs = {graph: None for graph in graphs} 
+    else:
+        log('Calculating ground truth...')
+        gt_graphs = {graph : gp.chromatic_number(graph) for graph in graphs}
+        log(f'{round(time.time() - start, 3)} seconds')
     
     # color each graph with each algorithm
     # each algorithm will predict the chi of the graph and this will form new
@@ -158,10 +168,20 @@ def main():
     # aco.compute_chi(graphs)
     
     # analyze the difference between the predictions and the actual
-    table = tab.tabulate(
+    table_1 = tab.tabulate(
         zip(list(range(len(graphs))), gt_graphs.values(), gr_graphs.values(), de_graphs.values()), 
         headers=['num', 'truth', 'greedy', 'de'] )
-    log(f'\n{table}')
+    # log(f'\nChromatic numbers for graphs:\n{table_1}')
+    min_chi = min([min(gr_graphs.values()), min(de_graphs.values())])
+    max_chi = max([max(gr_graphs.values()), max(de_graphs.values())])
+    gr_modes = [list(gr_graphs.values()).count(idx) for idx in range(min_chi, max_chi + 1)]
+    de_modes = [list(de_graphs.values()).count(idx) for idx in range(min_chi, max_chi + 1)]
+    table_2 = tab.tabulate(
+        zip(list(range(min_chi, max_chi + 1)), gr_modes, de_modes),
+        headers=['num', 'greedy', 'de']
+    )
+    log(f'\nFrequency of chromatic numbers:\n{table_2}')
+    
     # TODO
     
     log('...finished.')
