@@ -44,7 +44,7 @@ class Optimizer:
 
     def __init__(self, **kwargs):
         self.pops          = kwargs.get('pops', 50)
-        self.generations   = kwargs.get('gens', 100)
+        self.generations   = kwargs.get('gens', 50)
         self.omega         = kwargs.get('omega', 0.5)
         self.phi_particle  = kwargs.get('phi_particle', 0.5)
         self.phi_global    = kwargs.get('phi_global', 0.5)
