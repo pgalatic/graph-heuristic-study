@@ -18,8 +18,8 @@ import tabulate as tab
 
 # PROJECT LIB
 import de as de
-# import pso
-# import aco
+import pso as pso
+# import aco as aco
 from greedy_color import greedy_color
 
 # CONSTANTS
@@ -164,13 +164,16 @@ def main():
     start = time.time()
     de_graphs = compute_chi(de, graphs)
     log(f'{round(time.time() - start, 3)} seconds')
-    # pso.compute_chi(graphs)
-    # aco.compute_chi(graphs)
+
+    log('Calculating particle swarm optimization colorings...')
+    start = time.time()
+    pso_graphs = compute_chi(pso, graphs)
+    log(f'{round(time.time() - start, 3)} seconds')
 
     # analyze the difference between the predictions and the actual
     table = tab.tabulate(
-        zip(list(range(len(graphs))), gt_graphs.values(), gr_graphs.values(), de_graphs.values()),
-        headers=['num', 'truth', 'greedy', 'de'] )
+        zip(list(range(len(graphs))), gt_graphs.values(), gr_graphs.values(), de_graphs.values(), pso_graphs.values()),
+        headers=['num', 'truth', 'greedy', 'de', 'pso'] )
     log(f'\n{table}')
     # TODO
 
