@@ -189,8 +189,8 @@ def main():
         zip(list(range(len(graphs))), gt_graphs.values(), gr_graphs.values(), de_graphs.values(), pso_graphs.values(),
             ff_graphs.values()), headers=['num', 'truth', 'greedy', 'de', 'pso', 'firefly'])
     # log(f'\nChromatic numbers for graphs:\n{table_1}')
-    min_chi = min([min(gr_graphs.values()), min(de_graphs.values()), min(pso_graphs.values())])
-    max_chi = max([max(gr_graphs.values()), max(de_graphs.values()), max(pso_graphs.values())])
+    min_chi = min([min(gr_graphs.values()), min(de_graphs.values()), min(pso_graphs.values()), min(ff_graphs.values())])
+    max_chi = max([max(gr_graphs.values()), max(de_graphs.values()), max(pso_graphs.values()), max(ff_graphs.values())])
     gr_modes = [list(gr_graphs.values()).count(idx) for idx in range(min_chi, max_chi + 1)]
     de_modes = [list(de_graphs.values()).count(idx) for idx in range(min_chi, max_chi + 1)]
     pso_modes = [list(pso_graphs.values()).count(idx) for idx in range(min_chi, max_chi + 1)]
