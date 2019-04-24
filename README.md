@@ -4,7 +4,6 @@ A study of how well metaheuristics perform in the context of the famous graph co
 ## installation
 
 ```
-git clone https://github.com/somacdivad/grinpy.git
 pip install -r requirements.txt
 ```
 
@@ -16,8 +15,8 @@ The general form for running these programs is
 ```
 python driver.py <size> <num> [--gtskip]
 ```
-* <size> -- The size of the graphs to analyze. Choose between s (small), m (medium) and l (large).
-* <num> -- The quantity of graphs to analyze. Must be between 1 and 1000.
+* size -- The size of the graphs to analyze. Choose between s (small), m (medium) and l (large).
+* num -- The quantity of graphs to analyze. Must be between 1 and 1000.
 * gtskip -- Optional; skips the ground truth calculations. Useful for medium and large graphs.
 
 Here is an example command, which analyzes fifty medium graphs:
