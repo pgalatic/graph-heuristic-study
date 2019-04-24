@@ -30,7 +30,7 @@ GRAPH_DIR = Path('graph/')
 
 SML = 10
 MED = 23
-LRG = 300
+LRG = 100
 NUM = 1000
 
 SML_NAME = f'n{SML}.g6'
@@ -143,12 +143,19 @@ def main():
     log('Starting...')
 
     # load graphs, or generate them if they don't exist
+    if not os.path.exists(str(GRAPH_DIR)):
+        os.mkdir(str(GRAPH_DIR))
     if not os.path.exists(str(GRAPH_DIR / SML_NAME)):
         record_graphs(gen_rand_graphs(SML), str(GRAPH_DIR / SML_NAME))
     if not os.path.exists(str(GRAPH_DIR / MED_NAME)):
         record_graphs(gen_rand_graphs(MED), str(GRAPH_DIR / MED_NAME))
     if not os.path.exists(str(GRAPH_DIR / LRG_NAME)):
         record_graphs(gen_rand_graphs(LRG), str(GRAPH_DIR / LRG_NAME))
+    
+    if args.n < 1:
+        log('Must select at least one graph.')
+        raise SystemExit
+    
     graphs = load_graphs(args.mode, args.n)
 
     # ground truth graphs
@@ -184,11 +191,12 @@ def main():
     ff_graphs = compute_chi(ff, graphs)
     log(f'{round(time.time() - start, 3)} seconds')
 
-    # analyze the difference between the predictions and the actual
+    # print results
     table_1 = tab.tabulate(
         zip(list(range(len(graphs))), gt_graphs.values(), gr_graphs.values(), de_graphs.values(), pso_graphs.values(),
-            ff_graphs.values()), headers=['num', 'truth', 'greedy', 'de', 'pso', 'firefly'])
-    # log(f'\nChromatic numbers for graphs:\n{table_1}')
+            ff_graphs.values()), headers=['id', 'truth', 'greedy', 'de', 'pso', 'firefly'])
+    log(f'\nChromatic numbers for graphs:\n{table_1}')
+    
     min_chi = min([min(gr_graphs.values()), min(de_graphs.values()), min(pso_graphs.values()), min(ff_graphs.values())])
     max_chi = max([max(gr_graphs.values()), max(de_graphs.values()), max(pso_graphs.values()), max(ff_graphs.values())])
     gr_modes = [list(gr_graphs.values()).count(idx) for idx in range(min_chi, max_chi + 1)]
@@ -197,7 +205,7 @@ def main():
     firefly_mode = [list(ff_graphs.values()).count(idx) for idx in range(min_chi, max_chi + 1)]
     table_2 = tab.tabulate(
         zip(list(range(min_chi, max_chi + 1)), gr_modes, de_modes, pso_modes, firefly_mode),
-        headers=['num', 'greedy', 'de', 'pso', 'firefly']
+        headers=['chi', 'greedy', 'de', 'pso', 'firefly']
     )
     log(f'\nFrequency of chromatic numbers:\n{table_2}')
 

@@ -2,7 +2,9 @@
 #
 # Graph heuristic study -- compute chi numbers
 #
-# inspired by https://ieeexplore.ieee.org/abstract/document/5952075
+# inspired by:
+# * https://ieeexplore.ieee.org/abstract/document/5952075\
+# * https://ieeexplore.ieee.org/document/5365201
 
 # standard lib
 import sys
@@ -49,7 +51,9 @@ class Particle(Solution):
                 trial[idx] = donor[idx]
             else:
                 trial[idx] = self.position[idx]
+        # apply fitness function based on x vector
         trial_fitness = self.fit_func(trial)
+        # only change if the trial candidate has a beter fitness score
         if trial_fitness > self.fitness:
             self.update_position(trial)
 
@@ -68,15 +72,19 @@ class Optimizer:
         if self.seed:
             np.random.seed(self.seed)
 
+        # instantiate a population of particles
         self.population = []
         for i in range(self.pops):
             self.population.append(Particle(self.graph, self.omega, self.phi))
 
     def step(self):
+        # update every member of the population via its update function
         for pop in self.population:
             tmp_population = [item for item in self.population if item != pop]
+            # updating requires 3 peers; select them randomly
             peers = random.sample(tmp_population, 3)
             pop.update(peers)
+        # return the fittest member of the population
         self.population.sort(key=operator.attrgetter('fitness'), reverse=True)
         return self.population[0]
 
