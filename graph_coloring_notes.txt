@@ -1,0 +1,22 @@
+Notes for the Graph Coloring Survey Project
+
+A simple plan of research would be to start with Andrew Radin thesis
+https://scholarworks.rit.edu/theses/660/. 
+
+First, update the last two
+decades of work by others. 
+
+Then do better and go beyond Andrew's thesis.
+In addition to different algorithms, I would also consider families of
+special graphs, like Payley or Mycielski graphs. How well heuristics
+do on them?
+
+- Add simulated annealing
+- Add Radin's fitness function
+- Graphs of >= 500 vertices for 30 graphs
+- Add special types of graphs (Payley -- chi ~~ clique, Mycielski -- chi < clique)
+- For random graphs: .5 and .85
+- Graphs types: Random .5, Random .85, Payley, Mycielski
+
+2 fitness function X 3 algorithms (PSO, DE, SA) X 4 graph types = 24 runs
+
