@@ -1,5 +1,5 @@
 networkx==2.2
-numpy==1.16.2
+numpy==1.22.0
 pulp==1.6.9
 tabulate==0.8.3
 grinpy==0.2.0a2
